@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#4f46e5" />
+  <title>TOEIC単語帳</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="単語帳" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1 class="app-title">TOEIC単語帳</h1>
+    <div class="progress-mini" id="progressMini"></div>
+  </header>
+
+  <!-- ===== 学習（フラッシュカード）画面 ===== -->
+  <section id="studyView" class="view">
+    <div class="deck-tabs" id="deckTabs">
+      <button class="deck-tab active" data-deck="smart">おすすめ</button>
+      <button class="deck-tab" data-deck="weak">苦手</button>
+      <button class="deck-tab" data-deck="new">未学習</button>
+      <button class="deck-tab" data-deck="all">全部</button>
+    </div>
+
+    <div id="studyArea" class="study-area">
+      <div class="study-count" id="studyCount"></div>
+      <div class="flashcard" id="flashcard">
+        <div class="card-inner" id="cardInner">
+          <div class="card-face card-front">
+            <span class="card-pos" id="cardPos"></span>
+            <span class="card-en" id="cardEn"></span>
+            <span class="card-hint">タップで意味を表示</span>
+          </div>
+          <div class="card-face card-back">
+            <span class="card-en-small" id="cardEnSmall"></span>
+            <span class="card-ja" id="cardJa"></span>
+          </div>
+        </div>
+      </div>
+      <div class="study-actions" id="studyActions">
+        <button class="ans-btn ans-weak" id="btnWeak">まだ ✗</button>
+        <button class="ans-btn ans-known" id="btnKnown">覚えた ✓</button>
+      </div>
+    </div>
+
+    <div id="studyEmpty" class="study-empty" hidden>
+      <div class="empty-emoji">🎉</div>
+      <p class="empty-title" id="studyEmptyTitle">このデッキは空です</p>
+      <p class="empty-sub" id="studyEmptySub">別のデッキを選ぶか、単語を追加しましょう</p>
+    </div>
+  </section>
+
+  <!-- ===== 一覧画面 ===== -->
+  <section id="listView" class="view" hidden>
+    <div class="list-tabs" id="listTabs">
+      <button class="list-tab active" data-filter="all">すべて</button>
+      <button class="list-tab" data-filter="weak">苦手</button>
+      <button class="list-tab" data-filter="learned">覚えた</button>
+      <button class="list-tab" data-filter="new">未学習</button>
+    </div>
+    <div class="search-bar">
+      <input id="searchInput" type="search" placeholder="英単語・意味で検索" />
+    </div>
+    <ul id="wordList" class="word-list"></ul>
+    <div id="listEmpty" class="study-empty" hidden>
+      <div class="empty-emoji">📭</div>
+      <p class="empty-title">単語がありません</p>
+    </div>
+  </section>
+
+  <!-- ===== ボトムナビ ===== -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="study">
+      <span class="nav-ico">📇</span><span class="nav-label">学習</span>
+    </button>
+    <button class="nav-btn" data-view="list">
+      <span class="nav-ico">🗂️</span><span class="nav-label">一覧</span>
+    </button>
+    <button class="nav-btn" id="importNav">
+      <span class="nav-ico">📥</span><span class="nav-label">取込</span>
+    </button>
+  </nav>
+
+  <button id="fab" class="fab" aria-label="単語を追加">
+    <svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z"/></svg>
+  </button>
+
+  <!-- 追加/編集シート -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <h2 id="sheetTitle" class="sheet-title">単語を追加</h2>
+      <form id="wordForm" class="form">
+        <label class="field"><span class="field-label">英単語</span>
+          <input id="fEn" type="text" required placeholder="例）budget" autocomplete="off" autocapitalize="none" />
+        </label>
+        <label class="field"><span class="field-label">意味</span>
+          <input id="fJa" type="text" required placeholder="例）予算" autocomplete="off" />
+        </label>
+        <label class="field"><span class="field-label">品詞（任意）</span>
+          <input id="fPos" type="text" placeholder="例）名" autocomplete="off" />
+        </label>
+        <input type="hidden" id="fId" />
+        <div class="form-actions">
+          <button type="button" id="deleteBtn" class="btn btn-danger" hidden>削除</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- インポートシート -->
+  <div id="importSheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title">まとめて取り込み</h2>
+      <p class="note">1行に1単語。<strong>英単語</strong>と<strong>意味</strong>を <strong>タブ</strong> または <strong>カンマ</strong> で区切ってください。<br>例: <code>budget&nbsp;&nbsp;&nbsp;予算</code></p>
+      <textarea id="importText" class="import-text" placeholder="budget	予算&#10;invoice	請求書&#10;deadline	締め切り"></textarea>
+      <div class="form-actions">
+        <button type="button" id="importRun" class="btn btn-primary">取り込む</button>
+      </div>
+      <p id="importResult" class="note"></p>
+    </div>
+  </div>
+
+  <script src="words.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
