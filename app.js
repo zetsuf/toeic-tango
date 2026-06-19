@@ -1,5 +1,6 @@
 // ===== TOEIC単語帳 =====
 const STORE_KEY = 'toeic-tango.v1';
+const STARTER_VERSION = 2; // スターター単語を更新したら上げる（既存ユーザーへ差分追加）
 
 /** @typedef {{id:string,en:string,ja:string,pos:string,status:'new'|'weak'|'learned',seen:number,known:number,updatedAt:number}} Word */
 
@@ -13,16 +14,28 @@ let flipped = false;
 
 // ---------- 永続化 / 初期化 ----------
 function load() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORE_KEY));
-    if (raw && Array.isArray(raw.words)) return raw.words;
-  } catch {}
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STORE_KEY)); } catch {}
+  if (saved && Array.isArray(saved.words)) {
+    let w = saved.words;
+    // スターター単語が更新されていたら、未所持の語だけ差分追加（進捗は保持）
+    if (saved.starterVersion !== STARTER_VERSION) w = mergeStarters(w);
+    localStorage.setItem(STORE_KEY, JSON.stringify({ words: w, starterVersion: STARTER_VERSION }));
+    return w;
+  }
   // 初回: スターター単語を投入
-  const seed = (window.STARTER_WORDS || []).map((w) => newWord(w.en, w.ja, w.pos));
-  localStorage.setItem(STORE_KEY, JSON.stringify({ words: seed }));
+  const seed = (window.STARTER_WORDS || []).map((x) => newWord(x.en, x.ja, x.pos));
+  localStorage.setItem(STORE_KEY, JSON.stringify({ words: seed, starterVersion: STARTER_VERSION }));
   return seed;
 }
-function save() { localStorage.setItem(STORE_KEY, JSON.stringify({ words })); }
+function mergeStarters(w) {
+  const have = new Set(w.map((x) => x.en.toLowerCase()));
+  for (const s of (window.STARTER_WORDS || [])) {
+    if (!have.has(s.en.toLowerCase())) w.push(newWord(s.en, s.ja, s.pos));
+  }
+  return w;
+}
+function save() { localStorage.setItem(STORE_KEY, JSON.stringify({ words, starterVersion: STARTER_VERSION })); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function newWord(en, ja, pos) {
   return { id: uid(), en: en.trim(), ja: ja.trim(), pos: (pos || '').trim(), status: 'new', seen: 0, known: 0, updatedAt: Date.now() };
@@ -290,6 +303,55 @@ fab.addEventListener('click', () => openSheet(null));
 [sheet, importSheet].forEach((s) =>
   s.addEventListener('click', (e) => { if (e.target.matches('[data-close]')) s.hidden = true; })
 );
+
+// ---------- 暗証番号ロック（その日の mmdd）----------
+function todayPin() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return mm + dd;
+}
+
+const lockScreen = document.getElementById('lockScreen');
+const lockDots = document.getElementById('lockDots');
+const keypad = document.getElementById('keypad');
+let pinEntry = '';
+
+function renderDots() {
+  [...lockDots.children].forEach((dot, i) => dot.classList.toggle('filled', i < pinEntry.length));
+}
+function pinPress(digit) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += digit;
+  renderDots();
+  if (pinEntry.length === 4) setTimeout(checkPin, 120);
+}
+function pinDelete() { pinEntry = pinEntry.slice(0, -1); renderDots(); }
+function checkPin() {
+  if (pinEntry === todayPin()) {
+    lockScreen.classList.add('unlocked');
+    setTimeout(() => { lockScreen.hidden = true; }, 300);
+  } else {
+    lockScreen.classList.add('shake');
+    setTimeout(() => { lockScreen.classList.remove('shake'); pinEntry = ''; renderDots(); }, 450);
+  }
+}
+
+if (keypad) {
+  keypad.addEventListener('click', (e) => {
+    const k = e.target.closest('.key');
+    if (!k) return;
+    if (k.dataset.key === 'del') pinDelete();
+    else if (k.dataset.key != null) pinPress(k.dataset.key);
+  });
+  // 物理キーボードにも対応（PC用）
+  window.addEventListener('keydown', (e) => {
+    if (lockScreen.hidden) return;
+    if (/^[0-9]$/.test(e.key)) pinPress(e.key);
+    else if (e.key === 'Backspace') pinDelete();
+  });
+  renderDots();
+}
 
 // ---------- 初期化 ----------
 updateProgress();

@@ -1,5 +1,5 @@
 // Service Worker — ネットワーク優先 + オフライン用キャッシュ
-const CACHE = 'toeic-tango-v1';
+const CACHE = 'toeic-tango-v2';
 const ASSETS = [
   './',
   './index.html',
