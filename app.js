@@ -1,6 +1,6 @@
 // ===== TOEIC単語帳 =====
 const STORE_KEY = 'toeic-tango.v1';
-const STARTER_VERSION = 2; // スターター単語を更新したら上げる（既存ユーザーへ差分追加）
+const STARTER_VERSION = 3; // スターター単語を更新したら上げる（既存ユーザーへ差分追加）
 
 /** @typedef {{id:string,en:string,ja:string,pos:string,status:'new'|'weak'|'learned',seen:number,known:number,updatedAt:number}} Word */
 
@@ -45,6 +45,7 @@ function newWord(en, ja, pos) {
 function deckWords(d) {
   if (d === 'weak') return words.filter((w) => w.status === 'weak');
   if (d === 'new') return words.filter((w) => w.status === 'new');
+  if (d === 'learned') return words.filter((w) => w.status === 'learned');
   if (d === 'all') return words.slice();
   // smart: 苦手→未学習を優先、覚えたは除く
   return words.filter((w) => w.status !== 'learned');
@@ -104,6 +105,7 @@ function renderStudy() {
     const s = document.getElementById('studyEmptySub');
     if (deck === 'weak') { t.textContent = '苦手な単語はありません'; s.textContent = '「まだ」を押した単語がここに集まります'; }
     else if (deck === 'new') { t.textContent = '未学習の単語はありません'; s.textContent = '全部チェック済みです！'; }
+    else if (deck === 'learned') { t.textContent = '学習済の単語はありません'; s.textContent = '「覚えた」を押すと、ここで復習できます'; }
     else { t.textContent = 'お疲れさまでした！'; s.textContent = '覚えていない単語はありません 🎉'; }
     return;
   }
@@ -120,7 +122,7 @@ function renderCard() {
   studyCount.textContent = `残り ${queue.length + 1} 枚 ・ ${deckLabel(deck)}`;
 }
 function deckLabel(d) {
-  return { smart: 'おすすめ', weak: '苦手', new: '未学習', all: '全部' }[d];
+  return { smart: 'おすすめ', weak: '苦手', new: '未学習', learned: '学習済', all: '全部' }[d];
 }
 
 function flipCard() {
