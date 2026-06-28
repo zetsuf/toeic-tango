@@ -306,55 +306,40 @@ fab.addEventListener('click', () => openSheet(null));
   s.addEventListener('click', (e) => { if (e.target.matches('[data-close]')) s.hidden = true; })
 );
 
-// ---------- 暗証番号ロック（その日の mmdd）----------
-function todayPin() {
-  const d = new Date();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return mm + dd;
-}
+// ---------- モード切替（ハンバーガー/サイドバー）----------
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+const hamburger = document.getElementById('hamburger');
+const appTitle = document.getElementById('appTitle');
+const vocabMode = document.getElementById('vocabMode');
+const listeningView = document.getElementById('listeningView');
+const MODE_TITLES = { vocab: '単語帳', part2: 'Part 2', part3: 'Part 3', part4: 'Part 4' };
 
-const lockScreen = document.getElementById('lockScreen');
-const lockDots = document.getElementById('lockDots');
-const keypad = document.getElementById('keypad');
-let pinEntry = '';
+function openDrawer() { drawer.classList.add('open'); drawerOverlay.hidden = false; }
+function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.hidden = true; }
 
-function renderDots() {
-  [...lockDots.children].forEach((dot, i) => dot.classList.toggle('filled', i < pinEntry.length));
-}
-function pinPress(digit) {
-  if (pinEntry.length >= 4) return;
-  pinEntry += digit;
-  renderDots();
-  if (pinEntry.length === 4) setTimeout(checkPin, 120);
-}
-function pinDelete() { pinEntry = pinEntry.slice(0, -1); renderDots(); }
-function checkPin() {
-  if (pinEntry === todayPin()) {
-    lockScreen.classList.add('unlocked');
-    setTimeout(() => { lockScreen.hidden = true; }, 300);
+function switchMode(mode) {
+  closeDrawer();
+  document.querySelectorAll('.drawer-item').forEach((b) => b.classList.toggle('active', b.dataset.mode === mode));
+  appTitle.textContent = MODE_TITLES[mode] || '単語帳';
+  if (mode === 'vocab') {
+    vocabMode.style.display = '';
+    listeningView.hidden = true;
+    if (window.Listening) window.Listening.close();
+    updateProgress();
   } else {
-    lockScreen.classList.add('shake');
-    setTimeout(() => { lockScreen.classList.remove('shake'); pinEntry = ''; renderDots(); }, 450);
+    vocabMode.style.display = 'none';
+    listeningView.hidden = false;
+    document.getElementById('progressMini').textContent = '';
+    if (window.Listening) window.Listening.open(mode);
   }
 }
 
-if (keypad) {
-  keypad.addEventListener('click', (e) => {
-    const k = e.target.closest('.key');
-    if (!k) return;
-    if (k.dataset.key === 'del') pinDelete();
-    else if (k.dataset.key != null) pinPress(k.dataset.key);
-  });
-  // 物理キーボードにも対応（PC用）
-  window.addEventListener('keydown', (e) => {
-    if (lockScreen.hidden) return;
-    if (/^[0-9]$/.test(e.key)) pinPress(e.key);
-    else if (e.key === 'Backspace') pinDelete();
-  });
-  renderDots();
-}
+hamburger.addEventListener('click', openDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+document.querySelectorAll('.drawer-item').forEach((b) => b.addEventListener('click', () => switchMode(b.dataset.mode)));
 
 // ---------- 初期化 ----------
 updateProgress();
 switchView('study');
+switchMode('vocab');

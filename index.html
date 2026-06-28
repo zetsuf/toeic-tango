@@ -4,118 +4,105 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#4f46e5" />
-  <title>TOEIC単語帳</title>
+  <title>TOEIC学習</title>
 
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="単語帳" />
+  <meta name="apple-mobile-web-app-title" content="TOEIC学習" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- 暗証番号ロック画面 -->
-  <div id="lockScreen" class="lock-screen">
-    <div class="lock-box">
-      <div class="lock-icon">🔒</div>
-      <div class="lock-title">暗証番号を入力</div>
-      <div class="lock-dots" id="lockDots"><span></span><span></span><span></span><span></span></div>
-      <div class="keypad" id="keypad">
-        <button class="key" data-key="1">1</button>
-        <button class="key" data-key="2">2</button>
-        <button class="key" data-key="3">3</button>
-        <button class="key" data-key="4">4</button>
-        <button class="key" data-key="5">5</button>
-        <button class="key" data-key="6">6</button>
-        <button class="key" data-key="7">7</button>
-        <button class="key" data-key="8">8</button>
-        <button class="key" data-key="9">9</button>
-        <span class="key key-empty"></span>
-        <button class="key" data-key="0">0</button>
-        <button class="key key-del" data-key="del">⌫</button>
-      </div>
-    </div>
-  </div>
-
   <header class="app-header">
-    <h1 class="app-title">TOEIC単語帳</h1>
+    <button id="hamburger" class="icon-btn" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M3 6h18v2H3V6Zm0 5h18v2H3v-2Zm0 5h18v2H3v-2Z"/></svg>
+    </button>
+    <h1 class="app-title" id="appTitle">単語帳</h1>
     <div class="progress-mini" id="progressMini"></div>
   </header>
 
-  <!-- ===== 学習（フラッシュカード）画面 ===== -->
-  <section id="studyView" class="view">
-    <div class="deck-tabs" id="deckTabs">
-      <button class="deck-tab active" data-deck="smart">おすすめ</button>
-      <button class="deck-tab" data-deck="weak">苦手</button>
-      <button class="deck-tab" data-deck="new">未学習</button>
-      <button class="deck-tab" data-deck="learned">学習済</button>
-      <button class="deck-tab" data-deck="all">全部</button>
-    </div>
+  <!-- サイドバー -->
+  <div id="drawerOverlay" class="drawer-overlay" hidden></div>
+  <aside id="drawer" class="drawer">
+    <div class="drawer-head">メニュー</div>
+    <button class="drawer-item active" data-mode="vocab"><span class="d-ico">📇</span>単語帳</button>
+    <div class="drawer-sub">リスニング対策</div>
+    <button class="drawer-item" data-mode="part2"><span class="d-ico">🎧</span>Part 2 ＜応答問題＞</button>
+    <button class="drawer-item" data-mode="part3"><span class="d-ico">🎧</span>Part 3 ＜会話問題＞</button>
+    <button class="drawer-item" data-mode="part4"><span class="d-ico">🎧</span>Part 4 ＜説明文問題＞</button>
+    <p class="drawer-note">※リスニングはオリジナル練習問題です。音声は端末の合成音声で読み上げます。</p>
+  </aside>
 
-    <div id="studyArea" class="study-area">
-      <div class="study-count" id="studyCount"></div>
-      <div class="flashcard" id="flashcard">
-        <div class="card-inner" id="cardInner">
-          <div class="card-face card-front">
-            <span class="card-pos" id="cardPos"></span>
-            <span class="card-en" id="cardEn"></span>
-            <span class="card-hint">タップで意味を表示</span>
-          </div>
-          <div class="card-face card-back">
-            <span class="card-en-small" id="cardEnSmall"></span>
-            <span class="card-ja" id="cardJa"></span>
+  <!-- ===== 単語帳モード ===== -->
+  <div id="vocabMode">
+    <section id="studyView" class="view">
+      <div class="deck-tabs" id="deckTabs">
+        <button class="deck-tab active" data-deck="smart">おすすめ</button>
+        <button class="deck-tab" data-deck="weak">苦手</button>
+        <button class="deck-tab" data-deck="new">未学習</button>
+        <button class="deck-tab" data-deck="learned">学習済</button>
+        <button class="deck-tab" data-deck="all">全部</button>
+      </div>
+      <div id="studyArea" class="study-area">
+        <div class="study-count" id="studyCount"></div>
+        <div class="flashcard" id="flashcard">
+          <div class="card-inner" id="cardInner">
+            <div class="card-face card-front">
+              <span class="card-pos" id="cardPos"></span>
+              <span class="card-en" id="cardEn"></span>
+              <span class="card-hint">タップで意味を表示</span>
+            </div>
+            <div class="card-face card-back">
+              <span class="card-en-small" id="cardEnSmall"></span>
+              <span class="card-ja" id="cardJa"></span>
+            </div>
           </div>
         </div>
+        <div class="study-actions" id="studyActions">
+          <button class="ans-btn ans-weak" id="btnWeak">まだ ✗</button>
+          <button class="ans-btn ans-known" id="btnKnown">覚えた ✓</button>
+        </div>
       </div>
-      <div class="study-actions" id="studyActions">
-        <button class="ans-btn ans-weak" id="btnWeak">まだ ✗</button>
-        <button class="ans-btn ans-known" id="btnKnown">覚えた ✓</button>
+      <div id="studyEmpty" class="study-empty" hidden>
+        <div class="empty-emoji">🎉</div>
+        <p class="empty-title" id="studyEmptyTitle">このデッキは空です</p>
+        <p class="empty-sub" id="studyEmptySub">別のデッキを選ぶか、単語を追加しましょう</p>
       </div>
-    </div>
+    </section>
 
-    <div id="studyEmpty" class="study-empty" hidden>
-      <div class="empty-emoji">🎉</div>
-      <p class="empty-title" id="studyEmptyTitle">このデッキは空です</p>
-      <p class="empty-sub" id="studyEmptySub">別のデッキを選ぶか、単語を追加しましょう</p>
-    </div>
-  </section>
+    <section id="listView" class="view" hidden>
+      <div class="list-tabs" id="listTabs">
+        <button class="list-tab active" data-filter="all">すべて</button>
+        <button class="list-tab" data-filter="weak">苦手</button>
+        <button class="list-tab" data-filter="learned">覚えた</button>
+        <button class="list-tab" data-filter="new">未学習</button>
+      </div>
+      <div class="search-bar">
+        <input id="searchInput" type="search" placeholder="英単語・意味で検索" />
+      </div>
+      <ul id="wordList" class="word-list"></ul>
+      <div id="listEmpty" class="study-empty" hidden>
+        <div class="empty-emoji">📭</div>
+        <p class="empty-title">単語がありません</p>
+      </div>
+    </section>
 
-  <!-- ===== 一覧画面 ===== -->
-  <section id="listView" class="view" hidden>
-    <div class="list-tabs" id="listTabs">
-      <button class="list-tab active" data-filter="all">すべて</button>
-      <button class="list-tab" data-filter="weak">苦手</button>
-      <button class="list-tab" data-filter="learned">覚えた</button>
-      <button class="list-tab" data-filter="new">未学習</button>
-    </div>
-    <div class="search-bar">
-      <input id="searchInput" type="search" placeholder="英単語・意味で検索" />
-    </div>
-    <ul id="wordList" class="word-list"></ul>
-    <div id="listEmpty" class="study-empty" hidden>
-      <div class="empty-emoji">📭</div>
-      <p class="empty-title">単語がありません</p>
-    </div>
-  </section>
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-view="study"><span class="nav-ico">📇</span><span class="nav-label">学習</span></button>
+      <button class="nav-btn" data-view="list"><span class="nav-ico">🗂️</span><span class="nav-label">一覧</span></button>
+      <button class="nav-btn" id="importNav"><span class="nav-ico">📥</span><span class="nav-label">取込</span></button>
+    </nav>
 
-  <!-- ===== ボトムナビ ===== -->
-  <nav class="bottom-nav">
-    <button class="nav-btn active" data-view="study">
-      <span class="nav-ico">📇</span><span class="nav-label">学習</span>
+    <button id="fab" class="fab" aria-label="単語を追加">
+      <svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z"/></svg>
     </button>
-    <button class="nav-btn" data-view="list">
-      <span class="nav-ico">🗂️</span><span class="nav-label">一覧</span>
-    </button>
-    <button class="nav-btn" id="importNav">
-      <span class="nav-ico">📥</span><span class="nav-label">取込</span>
-    </button>
-  </nav>
+  </div>
 
-  <button id="fab" class="fab" aria-label="単語を追加">
-    <svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z"/></svg>
-  </button>
+  <!-- ===== リスニングモード ===== -->
+  <section id="listeningView" class="view" hidden></section>
 
   <!-- 追加/編集シート -->
   <div id="sheet" class="sheet" hidden>
@@ -158,6 +145,7 @@
   </div>
 
   <script src="words.js"></script>
+  <script src="listening.js"></script>
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
