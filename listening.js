@@ -378,24 +378,57 @@ window.Listening = (function () {
   function el() { return document.getElementById('listeningView'); }
   function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
-  // ---- 音声合成 ----
+  // ---- 音声合成（アプリ=ネイティブTTS / ブラウザ=Web Speech API）----
+  const Cap = window.Capacitor;
+  const isNative = !!(Cap && typeof Cap.isNativePlatform === 'function' && Cap.isNativePlatform());
+  let NativeTTS = null;
+  if (isNative) {
+    try {
+      if (Cap.Plugins && Cap.Plugins.TextToSpeech) NativeTTS = Cap.Plugins.TextToSpeech;
+      else if (typeof Cap.registerPlugin === 'function') NativeTTS = Cap.registerPlugin('TextToSpeech');
+    } catch (e) { NativeTTS = null; }
+  }
+  const hasWebTTS = ('speechSynthesis' in window) && typeof window.SpeechSynthesisUtterance === 'function';
+  let speakToken = 0;
+
   let enVoice = null;
   function pickVoice() {
-    if (!('speechSynthesis' in window)) return;
+    if (!hasWebTTS) return;
     const vs = speechSynthesis.getVoices();
     enVoice = vs.find((v) => /en[-_]US/i.test(v.lang)) || vs.find((v) => /^en/i.test(v.lang)) || null;
   }
-  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-  function stopAudio() { if ('speechSynthesis' in window) speechSynthesis.cancel(); }
-  function speakLines(lines) {
-    if (!('speechSynthesis' in window)) { alert('この端末は音声読み上げに対応していません。'); return; }
+  if (hasWebTTS) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+  function ttsAvailable() { return !!NativeTTS || hasWebTTS; }
+  function stopAudio() {
+    speakToken++; // 再生中のシーケンスを無効化
+    if (NativeTTS) { try { NativeTTS.stop(); } catch (e) {} }
+    if (hasWebTTS) speechSynthesis.cancel();
+  }
+
+  async function speakLines(lines) {
+    if (!ttsAvailable()) { alert('この端末は音声読み上げに対応していません。'); return; }
     stopAudio();
-    lines.forEach((ln) => {
-      const u = new SpeechSynthesisUtterance(ln.text);
-      u.lang = 'en-US'; if (enVoice) u.voice = enVoice;
-      u.rate = 0.95; u.pitch = ln.pitch || 1;
-      speechSynthesis.speak(u);
-    });
+    const myToken = speakToken;
+    if (NativeTTS) {
+      // ネイティブTTSは1文ずつ順番に読み上げ（完了待ち）
+      let spokeAny = false;
+      for (const ln of lines) {
+        if (myToken !== speakToken) return; // 中断された
+        try {
+          await NativeTTS.speak({ text: ln.text, lang: 'en-US', rate: 1.0, pitch: ln.pitch || 1.0, volume: 1.0, category: 'playback' });
+          spokeAny = true;
+        } catch (e) { /* この行は飛ばして続行 */ }
+      }
+      if (!spokeAny) alert('英語の音声データが見つかりませんでした。端末の「設定 → 言語と入力 → 音声合成(TTS)」で英語の音声をインストールしてください。');
+    } else {
+      lines.forEach((ln) => {
+        const u = new SpeechSynthesisUtterance(ln.text);
+        u.lang = 'en-US'; if (enVoice) u.voice = enVoice;
+        u.rate = 0.95; u.pitch = ln.pitch || 1;
+        speechSynthesis.speak(u);
+      });
+    }
   }
 
   function open(p) { part = p; idx = 0; correct = 0; total = 0; render(); }
