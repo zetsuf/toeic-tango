@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TOEIC学習</string>
+    <string name="title_activity_main">TOEIC学習</string>
+    <string name="package_name">jp.zetsuf.toeic</string>
+    <string name="custom_url_scheme">jp.zetsuf.toeic</string>
+</resources>
