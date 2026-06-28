@@ -34,6 +34,26 @@ window.PART2 = [
   { prompt: "What's the Wi-Fi password?", choices: ["It's printed on the card.", 'Very fast connection.', 'In the lobby.'], answer: 0 },
   { prompt: "Didn't you order the supplies already?", choices: ['Yes, last week.', 'From the supplier.', 'Office supplies.'], answer: 0 },
   { prompt: 'The elevator is out of order.', choices: ["Let's take the stairs.", 'On the top floor.', "It's very fast."], answer: 0 },
+  { prompt: 'Could you turn down the air conditioning?', choices: ["Sure, it is a bit cold.", 'Yes, I turned it on.', 'The conditioner is new.'], answer: 0 },
+  { prompt: 'When is the deadline for the report?', choices: ['By the end of the week.', "It's in the report.", 'Mr. Sato wrote it.'], answer: 0 },
+  { prompt: 'Where should I sign?', choices: ['At the bottom of the page.', "It's a new pen.", 'Yes, please sign.'], answer: 0 },
+  { prompt: 'How much does shipping cost?', choices: ["It's free for members.", 'By truck.', 'Next Monday.'], answer: 0 },
+  { prompt: 'Why is the office closed today?', choices: ["It's a public holiday.", 'On the fifth floor.', 'At nine.'], answer: 0 },
+  { prompt: 'Have you met our new client?', choices: ['Not yet.', "It's a big client.", 'In the lobby.'], answer: 0 },
+  { prompt: 'Do you know how to use this software?', choices: ['Yes, I use it every day.', "It's expensive software.", 'On my computer.'], answer: 0 },
+  { prompt: 'Should we take the stairs or the elevator?', choices: ["Let's take the elevator.", 'On the top floor.', 'Yes, we should.'], answer: 0 },
+  { prompt: "Who's giving the presentation tomorrow?", choices: ['I think Maria is.', 'In the main hall.', 'About sales.'], answer: 0 },
+  { prompt: 'Can I leave early today?', choices: ["Of course, that's fine.", 'I left it at home.', 'Early in the morning.'], answer: 0 },
+  { prompt: 'Is this seat taken?', choices: ['No, go ahead.', "It's a comfortable seat.", 'Yes, I sat down.'], answer: 0 },
+  { prompt: "What's the agenda for the meeting?", choices: ["I'll send it to you now.", 'In the conference room.', 'At ten.'], answer: 0 },
+  { prompt: 'Would you prefer a window or aisle seat?', choices: ['A window seat, please.', 'On the plane.', 'Yes, I would.'], answer: 0 },
+  { prompt: 'Did the client approve the design?', choices: ['Yes, they loved it.', 'A new designer.', 'On the website.'], answer: 0 },
+  { prompt: 'How do I reset my password?', choices: ["Click 'forgot password' on the login page.", "It's a strong password.", 'Every month.'], answer: 0 },
+  { prompt: "We're running low on paper.", choices: ["I'll order some more.", "It's a paper company.", 'On the printer.'], answer: 0 },
+  { prompt: 'When will you finish the translation?', choices: ['By tomorrow morning.', 'Into French.', "It's a long document."], answer: 0 },
+  { prompt: 'Could you recommend a nearby restaurant?', choices: ["There's a great Italian place around the corner.", 'I had lunch already.', 'It was delicious.'], answer: 0 },
+  { prompt: "Why don't we carpool to the conference?", choices: ["Good idea, I'll drive.", "It's far away.", 'At the conference.'], answer: 0 },
+  { prompt: 'Is the manager available now?', choices: ["She's in a meeting until three.", "He's a good manager.", 'On the phone.'], answer: 0 },
 ];
 
 // ---- Part 3 ＜会話問題＞: 会話を聞き、設問に答える(各3問・選択肢A-D) ----
@@ -149,6 +169,79 @@ window.PART3 = [
       { q: 'What does the man say about the keyboards?', options: ["They're sold out", "They're on sale", "They're new models", "They're discontinued"], answer: 1 },
       { q: 'What color does the woman want?', options: ['White', 'Silver', 'Black', 'Blue'], answer: 2 },
     ] },
+  { title: '銀行で口座開設', script: [
+      { spk: 'W', text: "Good morning. I'd like to open a savings account." },
+      { spk: 'M', text: 'Certainly. Do you have a photo ID with you?' },
+      { spk: 'W', text: "Yes, here's my driver's license." },
+      { spk: 'M', text: "Great. Please fill out this form, and we'll set it up in a few minutes." },
+    ], questions: [
+      { q: 'Where does this conversation take place?', options: ['At a bank', 'At a library', 'At a post office', 'At a hotel'], answer: 0 },
+      { q: 'What does the woman want to do?', options: ['Close an account', 'Open a savings account', 'Apply for a loan', 'Exchange money'], answer: 1 },
+      { q: 'What does the man ask for?', options: ['A password', 'A photo ID', 'A signature only', 'A deposit'], answer: 1 },
+    ] },
+  { title: '新しいコピー機', script: [
+      { spk: 'M', text: 'The new copier on the third floor is much faster.' },
+      { spk: 'W', text: 'Really? The one on our floor is always jammed.' },
+      { spk: 'M', text: 'You should try the new one. It also scans to email.' },
+      { spk: 'W', text: "That's helpful. I'll use it for the big report." },
+    ], questions: [
+      { q: 'What are the speakers discussing?', options: ['A new copier', 'A new hire', 'A meeting', 'Some software'], answer: 0 },
+      { q: 'What problem does the woman mention?', options: ["It's slow", "It's always jammed", "It's out of ink", "It's too far"], answer: 1 },
+      { q: 'What feature does the man mention?', options: ['Color printing', 'Scanning to email', 'Stapling', 'Faxing'], answer: 1 },
+    ] },
+  { title: '海外オフィスとの電話', script: [
+      { spk: 'W', text: 'Can we schedule a call with the London office?' },
+      { spk: 'M', text: "Sure. Remember there's an eight-hour time difference." },
+      { spk: 'W', text: 'Right. How about 9 a.m. our time? That\'s 5 p.m. for them.' },
+      { spk: 'M', text: "That works. I'll send a calendar invite." },
+    ], questions: [
+      { q: 'Who do they want to call?', options: ['The London office', 'A client', 'The CEO', 'A supplier'], answer: 0 },
+      { q: 'What does the man remind her about?', options: ['A deadline', 'The time difference', 'A budget', 'A document'], answer: 1 },
+      { q: 'What will the man do?', options: ['Make the call', 'Send a calendar invite', 'Cancel the meeting', 'Book a flight'], answer: 1 },
+    ] },
+  { title: '保証での交換', script: [
+      { spk: 'M', text: 'My headphones stopped working after two weeks.' },
+      { spk: 'W', text: "I'm sorry. Do you have the warranty card?" },
+      { spk: 'M', text: 'Yes, and the receipt too.' },
+      { spk: 'W', text: 'We can replace them with a new pair today.' },
+    ], questions: [
+      { q: "What is the man's problem?", options: ['Lost headphones', 'Broken headphones', 'Wrong size', 'High price'], answer: 1 },
+      { q: 'What does the woman ask for?', options: ['The warranty card', 'His phone number', 'His address', 'A photo'], answer: 0 },
+      { q: 'What will happen?', options: ['A refund', 'A repair', 'A replacement', 'A discount'], answer: 2 },
+    ] },
+  { title: '通勤の話', script: [
+      { spk: 'W', text: 'How was your commute this morning?' },
+      { spk: 'M', text: 'Terrible. The train was delayed by thirty minutes.' },
+      { spk: 'W', text: 'Again? Maybe you should try the express bus.' },
+      { spk: 'M', text: 'Good idea. Does it stop near the office?' },
+      { spk: 'W', text: 'Yes, right in front of the building.' },
+    ], questions: [
+      { q: 'What was the problem?', options: ['A delayed train', 'A traffic jam', 'Bad weather', 'A flat tire'], answer: 0 },
+      { q: 'What does the woman suggest?', options: ['Driving', 'Taking the express bus', 'Working from home', 'Leaving earlier'], answer: 1 },
+      { q: 'Where does the bus stop?', options: ['At the station', 'Near his home', 'In front of the office', 'At a mall'], answer: 2 },
+    ] },
+  { title: 'ケータリングの手配', script: [
+      { spk: 'M', text: "We need to order food for Friday's workshop." },
+      { spk: 'W', text: 'How many people are attending?' },
+      { spk: 'M', text: 'About twenty-five.' },
+      { spk: 'W', text: "I'll order sandwiches and drinks from the usual caterer." },
+      { spk: 'M', text: 'Perfect. Please ask for some vegetarian options too.' },
+    ], questions: [
+      { q: 'What are they planning?', options: ["Food for a workshop", 'A birthday party', 'A product launch', 'A meeting room'], answer: 0 },
+      { q: 'How many people will attend?', options: ['15', '20', '25', '30'], answer: 2 },
+      { q: 'What does the man request?', options: ['Vegetarian options', 'A bigger room', 'More drinks', 'A discount'], answer: 0 },
+    ] },
+  { title: 'オフィス移転', script: [
+      { spk: 'W', text: 'Have you seen the new office space downtown?' },
+      { spk: 'M', text: "Yes, it's bigger and closer to the station." },
+      { spk: 'W', text: 'When are we planning to move?' },
+      { spk: 'M', text: 'Management says early next month.' },
+      { spk: 'W', text: "I'd better start packing my desk." },
+    ], questions: [
+      { q: 'What are they discussing?', options: ['A new office space', 'A vacation', 'A client visit', 'A renovation'], answer: 0 },
+      { q: 'What does the man say about it?', options: ["It's smaller", "It's bigger and closer to the station", "It's more expensive", "It's far away"], answer: 1 },
+      { q: 'When will they move?', options: ['This week', 'Early next month', 'Next year', 'Tomorrow'], answer: 1 },
+    ] },
 ];
 
 // ---- Part 4 ＜説明文問題＞: 1人の説明文(アナウンス/留守電/広告等)を聞き、設問に答える ----
@@ -222,6 +315,55 @@ window.PART4 = [
       { q: 'What will happen on Saturday?', options: ['A staff party', 'The parking lot will be repaved', 'An office move', 'A fire drill'], answer: 1 },
       { q: 'Where can employees park?', options: ['On the street', 'In the public garage', 'At a nearby mall', 'At home'], answer: 1 },
       { q: 'When will normal parking resume?', options: ['Saturday', 'Sunday', 'Monday', 'Friday'], answer: 2 },
+    ] },
+  { title: '閉店アナウンス', script: [
+      { spk: 'N', text: 'Attention shoppers. Our store will be closing in fifteen minutes. Please bring your final purchases to the checkout counters now. Our customer service desk is open until closing for any returns or questions. Thank you for shopping with us.' },
+    ], questions: [
+      { q: 'What is the purpose of the announcement?', options: ['A sale', 'The store is closing soon', 'A lost child', 'A new product'], answer: 1 },
+      { q: 'What should shoppers do?', options: ['Leave immediately', 'Bring purchases to checkout', 'Go to the parking lot', 'Wait at the entrance'], answer: 1 },
+      { q: 'What is open until closing?', options: ['The café', 'The customer service desk', 'The pharmacy', 'The restrooms'], answer: 1 },
+    ] },
+  { title: '電車内アナウンス', script: [
+      { spk: 'N', text: 'This is the express train to Central Station. The next stop is Riverside. Please note that this train does not stop at Oak Park or Greenwood. Passengers for those stations should change to the local train at Riverside. Mind the gap when leaving the train.' },
+    ], questions: [
+      { q: 'Where is this announcement heard?', options: ['On a train', 'On a plane', 'On a bus', 'At a port'], answer: 0 },
+      { q: 'What is the next stop?', options: ['Central Station', 'Riverside', 'Oak Park', 'Greenwood'], answer: 1 },
+      { q: 'What should passengers for Oak Park do?', options: ['Get off now', 'Change to the local train at Riverside', 'Stay on the train', 'Buy a new ticket'], answer: 1 },
+    ] },
+  { title: '配送の留守電', script: [
+      { spk: 'N', text: 'Hello, this message is for Mr. Carter. This is Lisa from Apex Supplies. Your order of office chairs has shipped and will arrive on Thursday. Someone must be present to sign for the delivery. If Thursday does not work, please call us to reschedule.' },
+    ], questions: [
+      { q: 'What was ordered?', options: ['Office chairs', 'Desks', 'Computers', 'Printers'], answer: 0 },
+      { q: 'When will it arrive?', options: ['Monday', 'Wednesday', 'Thursday', 'Friday'], answer: 2 },
+      { q: 'What must someone do?', options: ['Pay on delivery', 'Be present to sign', 'Pick it up', 'Assemble it'], answer: 1 },
+    ] },
+  { title: 'ジムの案内', script: [
+      { spk: 'N', text: 'Welcome to FitLife Gym. On your left is the cardio area with treadmills and bikes. Upstairs you will find the weight room and the yoga studio. Locker rooms with showers are at the back. Remember to wipe down equipment after use.' },
+    ], questions: [
+      { q: 'What kind of place is this?', options: ['A gym', 'A spa', 'A school', 'A hotel'], answer: 0 },
+      { q: 'Where is the yoga studio?', options: ['On the left', 'Upstairs', 'At the back', 'At the entrance'], answer: 1 },
+      { q: 'What are members reminded to do?', options: ['Bring a towel', 'Wipe down equipment', 'Sign in', 'Pay a fee'], answer: 1 },
+    ] },
+  { title: '週末の天気予報', script: [
+      { spk: 'N', text: "Here's your weekend forecast. Saturday will be sunny with a high of twenty-five degrees, perfect for outdoor plans. However, rain is expected on Sunday afternoon, so don't forget your umbrella. Temperatures will drop slightly next week." },
+    ], questions: [
+      { q: 'What is the speaker giving?', options: ['A weather forecast', 'Traffic news', 'Sports results', 'An advertisement'], answer: 0 },
+      { q: 'What will the weather be like on Saturday?', options: ['Rainy', 'Sunny', 'Snowy', 'Cloudy'], answer: 1 },
+      { q: 'What should listeners bring on Sunday?', options: ['Sunglasses', 'An umbrella', 'A coat', 'A hat'], answer: 1 },
+    ] },
+  { title: '研修の説明', script: [
+      { spk: 'N', text: "Welcome to today's time-management workshop. Over the next two hours, we'll cover how to prioritize tasks and avoid distractions. There will be a short break at the halfway point. Handouts are available at the front, and please feel free to ask questions at any time." },
+    ], questions: [
+      { q: 'What is the workshop about?', options: ['Time management', 'Public speaking', 'Sales', 'Marketing'], answer: 0 },
+      { q: 'How long will it last?', options: ['One hour', 'Two hours', 'Three hours', 'Half a day'], answer: 1 },
+      { q: 'Where can attendees get handouts?', options: ['Online', 'At the front', 'By email', 'At the back'], answer: 1 },
+    ] },
+  { title: '搭乗案内', script: [
+      { spk: 'N', text: 'Good afternoon, passengers. We will begin boarding Flight 88 to Sydney shortly. We will start with first class and passengers needing extra assistance, followed by groups one through four. Please have your boarding pass and passport ready.' },
+    ], questions: [
+      { q: 'Where is this announcement made?', options: ['At an airport gate', 'On a train', 'At a hotel', 'At a bus stop'], answer: 0 },
+      { q: 'Who boards first?', options: ['Group four', 'First class and those needing assistance', 'Families', 'Group one'], answer: 1 },
+      { q: 'What should passengers have ready?', options: ['Their luggage', 'Boarding pass and passport', 'A credit card', 'A ticket number'], answer: 1 },
     ] },
 ];
 
@@ -313,6 +455,7 @@ window.Listening = (function () {
           ${item.choices.map((c, i) => `<div class="li-sline ${i === item.answer ? 'ans' : ''}">(${L3[i]}) ${esc(c)}</div>`).join('')}</div>`;
         document.getElementById('liNext').hidden = false;
         updateMeta();
+        rev.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       };
     });
     document.getElementById('liNext').onclick = nextItem;
@@ -368,6 +511,7 @@ window.Listening = (function () {
       document.getElementById('liCheck').hidden = true;
       document.getElementById('liNext').hidden = false;
       updateMeta();
+      rev.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
     document.getElementById('liNext').onclick = nextItem;
   }
